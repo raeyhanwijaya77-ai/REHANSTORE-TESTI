@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RehanStore Testimoni</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg, #5a3b1e, #1a0f07);
+  color: white;
+  padding: 20px;
+}
+
+/* LOGO */
+.logo {
+  text-align: center;
+}
+.logo img {
+  width: 120px;
+  border-radius: 50%;
+  box-shadow: 0 0 20px gold;
+}
+
+/* BOX */
+.box {
+  background: #2b1a0f;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.box h2 {
+  font-size: 40px;
+  color: gold;
+}
+
+/* INPUT */
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* BINTANG */
+.stars span {
+  font-size: 30px;
+  cursor: pointer;
+  color: gray;
+}
+.stars .active {
+  color: gold;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+}
+
+.kirim { background: black; color: white; }
+.order { background: gold; color: black; }
+.wa { background: #25D366; color: white; }
+
+/* KOMEN */
+.comment {
+  background: white;
+  color: black;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="logo">
+  <img src="https://files.catbox.moe/65lsev.png">
+</div>
+
+<div class="box">
+  <h2 id="avg">0.0</h2>
+  <p id="total">0 komentar</p>
+</div>
+
+<h3>Bagikan Pengalaman</h3>
+
+<input id="nama" placeholder="Nama">
+<div class="stars" id="star">
+  <span>★</span>
+  <span>★</span>
+  <span>★</span>
+  <span>★</span>
+  <span>★</span>
+</div>
+
+<textarea id="komen" placeholder="Komentar"></textarea>
+
+<button class="kirim" onclick="kirim()">Kirim</button>
+<button class="order" onclick="order()">Order</button>
+<button class="wa" onclick="wa()">Join WA</button>
+
+<div id="list"></div>
+
+<script>
+let rating = 0;
+
+let stars = document.querySelectorAll("#star span");
+
+stars.forEach((s,i)=>{
+  s.onclick = ()=>{
+    rating = i+1;
+    stars.forEach(x=>x.classList.remove("active"));
+    for(let j=0;j<rating;j++){
+      stars[j].classList.add("active");
+    }
+  }
+});
+
+function getData(){
+  return JSON.parse(localStorage.getItem("komen_rehan")) || [];
+}
+
+function kirim(){
+  let nama = document.getElementById("nama").value;
+  let komen = document.getElementById("komen").value;
+
+  if(!nama || !komen || rating==0){
+    alert("Isi semua dulu");
+    return;
+  }
+
+  let data = getData();
+  data.push({nama,komen,rating});
+  localStorage.setItem("komen_rehan", JSON.stringify(data));
+
+  load();
+
+  document.getElementById("nama").value="";
+  document.getElementById("komen").value="";
+}
+
+function load(){
+  let data = getData();
+  let total = 0;
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(d=>{
+    total += d.rating;
+    list.innerHTML += `
+    <div class="comment">
+      <b>${d.nama}</b><br>
+      ⭐ ${d.rating}/5<br>
+      ${d.komen}
+    </div>`;
+  });
+
+  let avg = data.length ? (total/data.length).toFixed(1) : 0;
+
+  document.getElementById("avg").innerText = avg;
+  document.getElementById("total").innerText = data.length + " komentar";
+}
+
+function order(){
+  window.location.href = "https://rehan-prjct.vercel.app/";
+}
+
+function wa(){
+  window.open("https://whatsapp.com/channel/0029VbCRYOf6WaKs1OfaGP22");
+}
+
+load();
+</script>
+
+</body>
+</html>
